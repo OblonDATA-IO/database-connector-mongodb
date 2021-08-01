@@ -1,0 +1,22 @@
+{
+  "name": "database-connector-mongodb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "start": "nodemon"
+  },
+  "author": "OblonDATA.IO Limited <contact@oblondata.io>",
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^5.13.5"
+  },
+  "devDependencies": {
+    "@types/node": "^15.12.4",
+    "nodemon": "^2.0.7",
+    "typescript": "^4.3.4"
+  }
+}
