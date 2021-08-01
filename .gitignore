@@ -10,7 +10,7 @@ $RECYCLE.BIN/
 
 node_modules/
 .idea/
-dist/
+# dist/
 session/
 /lib/
 data/
