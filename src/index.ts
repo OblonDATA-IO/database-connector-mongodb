@@ -33,13 +33,13 @@ export class MongoDBConnector {
             mode,
             username, password, hosts, database,
             srv,
-            options: { isDebug }
+            options
         }: MongoDBConfig,
     ) {
         this.database = "";
         this.uri = "mongodb://";
 
-        if (isDebug === true) {
+        if (options?.isDebug === true) {
             mongoose.set("debug", true);
         }
 

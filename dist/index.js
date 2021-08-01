@@ -10,10 +10,10 @@ mongoose_1.default.set("useFindAndModify", false);
 mongoose_1.default.set("useCreateIndex", true);
 mongoose_1.default.set("useUnifiedTopology", true);
 class MongoDBConnector {
-    constructor({ mode, username, password, hosts, database, srv, options: { isDebug } }) {
+    constructor({ mode, username, password, hosts, database, srv, options }) {
         this.database = "";
         this.uri = "mongodb://";
-        if (isDebug === true) {
+        if (options?.isDebug === true) {
             mongoose_1.default.set("debug", true);
         }
         switch (mode) {
