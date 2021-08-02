@@ -67,7 +67,7 @@ class MongoDBConnector {
     async connect() {
         console.log(`[${new Date().toISOString()}] Connecting to database "${this.database}"`);
         try {
-            if (mongoose_1.default.connection) {
+            if ([1, 2].includes(mongoose_1.default.connection.readyState)) {
                 this.client = await mongoose_1.default.createConnection(this.uri, this.options);
             }
             else {

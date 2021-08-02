@@ -109,7 +109,7 @@ export class MongoDBConnector {
         console.log(`[${ new Date().toISOString() }] Connecting to database "${ this.database }"`);
 
         try {
-            if (mongoose.connection) {
+            if ([1, 2].includes(mongoose.connection.readyState)) {
                 this.client = await mongoose.createConnection(
                     this.uri,
                     this.options
