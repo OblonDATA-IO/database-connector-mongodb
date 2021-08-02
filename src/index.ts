@@ -109,10 +109,18 @@ export class MongoDBConnector {
         console.log(`[${ new Date().toISOString() }] Connecting to database "${ this.database }"`);
 
         try {
-            this.client = await mongoose.createConnection(
-                this.uri,
-                this.options
-            );
+            if (mongoose.connection) {
+                this.client = await mongoose.createConnection(
+                    this.uri,
+                    this.options
+                )
+            } else {
+                await mongoose.connect(
+                    this.uri,
+                    this.options
+                );
+                this.client = mongoose.connection;
+            }
             console.log(`[${ new Date().toISOString() }] Connection to database "${ this.database }" established.`);
         } catch (e) {
             console.error(`[${ new Date().toISOString() }] Dumping database connection stack trace: ${ e }`);
