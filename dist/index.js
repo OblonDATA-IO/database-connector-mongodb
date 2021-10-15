@@ -5,10 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MongoDBConnector = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-mongoose_1.default.set("useNewUrlParser", true);
-mongoose_1.default.set("useFindAndModify", false);
-mongoose_1.default.set("useCreateIndex", true);
-mongoose_1.default.set("useUnifiedTopology", true);
 class MongoDBConnector {
     constructor({ mode, username, password, hosts, database, srv, options }) {
         this.database = "";
@@ -68,7 +64,7 @@ class MongoDBConnector {
         console.log(`[${new Date().toISOString()}] Connecting to database "${this.database}"`);
         try {
             if ([1, 2].includes(mongoose_1.default.connection.readyState)) {
-                this.client = await mongoose_1.default.createConnection(this.uri, this.options);
+                this.client = await mongoose_1.default.createConnection(this.uri, this.options).asPromise();
             }
             else {
                 await mongoose_1.default.connect(this.uri, this.options);
@@ -81,11 +77,11 @@ class MongoDBConnector {
             console.error(`[${new Date().toISOString()}] Connection error: ${e.message}`);
             process.exit(1);
         }
-        this.client.on("error", (e) => {
+        this.client.on("error", e => {
             console.error(`[${new Date().toISOString()}] Dumping database connection stack trace: ${e}`);
             throw new Error(`[${new Date().toISOString()}] Database connection error: ${e.message}`);
         });
-        this.client.on("disconnected", (e) => {
+        this.client.on("disconnected", e => {
             console.error(`[${new Date().toISOString()}] Dumping disconnection stack trace: ${e}`);
             console.error(`[${new Date().toISOString()}] Disconnected from database "${this.database}"`);
             process.exit(1);

@@ -1,10 +1,5 @@
 import mongoose, { Connection, } from "mongoose";
 
-mongoose.set("useNewUrlParser", true);
-mongoose.set("useFindAndModify", false);
-mongoose.set("useCreateIndex", true);
-mongoose.set("useUnifiedTopology", true);
-
 interface MongoDBConfig {
     mode: string,
     username?: string,
@@ -110,15 +105,9 @@ export class MongoDBConnector {
 
         try {
             if ([1, 2].includes(mongoose.connection.readyState)) {
-                this.client = await mongoose.createConnection(
-                    this.uri,
-                    this.options
-                )
+                this.client = await mongoose.createConnection(this.uri, this.options).asPromise();
             } else {
-                await mongoose.connect(
-                    this.uri,
-                    this.options
-                );
+                await mongoose.connect(this.uri, this.options);
                 this.client = mongoose.connection;
             }
             console.log(`[${ new Date().toISOString() }] Connection to database "${ this.database }" established.`);
@@ -130,7 +119,7 @@ export class MongoDBConnector {
 
         this.client.on(
             "error",
-            (e) => {
+            e => {
                 console.error(`[${ new Date().toISOString() }] Dumping database connection stack trace: ${ e }`);
                 throw new Error(`[${ new Date().toISOString() }] Database connection error: ${ e.message }`);
             }
@@ -138,7 +127,7 @@ export class MongoDBConnector {
 
         this.client.on(
             "disconnected",
-            (e) => {
+            e => {
                 console.error(`[${ new Date().toISOString() }] Dumping disconnection stack trace: ${ e }`);
                 console.error(`[${ new Date().toISOString() }] Disconnected from database "${ this.database }"`);
                 process.exit(1);
