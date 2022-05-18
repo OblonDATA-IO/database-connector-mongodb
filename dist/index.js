@@ -40,8 +40,7 @@ class MongoDBConnector {
                 break;
             }
             case "env": {
-                if (process.env["MONGODB_USER"] &&
-                    process.env["MONGODB_PASSWORD"]) {
+                if (process.env["MONGODB_USER"] && process.env["MONGODB_PASSWORD"]) {
                     this.uri += `${process.env["MONGODB_USER"]}:${process.env["MONGODB_PASSWORD"]}@`;
                 }
                 this.uri += process.env["MONGODB_HOSTNAMES"]; // Replica set destinations as a string through one single environmental variable
@@ -50,9 +49,7 @@ class MongoDBConnector {
                 }
                 this.uri += `/${process.env["MONGODB_DATABASE"]}`;
                 this.database = process.env["MONGODB_DATABASE"];
-                this.options = {
-                    "dbName": process.env["MONGODB_DATABASE"]
-                };
+                this.options = { "dbName": process.env["MONGODB_DATABASE"] };
                 break;
             }
         }
