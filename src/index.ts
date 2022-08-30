@@ -7,7 +7,9 @@ interface MongoDBConfig {
     hosts?: Array<Host>,
     database?: string,
     srv?: string,
-    options: { isDebug }
+    options?: {
+        isDebug?: boolean,
+    }
 }
 
 interface Host {

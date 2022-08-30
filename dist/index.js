@@ -88,3 +88,4 @@ class MongoDBConnector {
 }
 exports.MongoDBConnector = MongoDBConnector;
 exports.default = MongoDBConnector;
+//# sourceMappingURL=index.js.map
