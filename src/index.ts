@@ -1,4 +1,4 @@
-import mongoose, { Connection, } from "mongoose";
+import mongoose, { Connection, Error, } from "mongoose";
 
 interface MongoDBConfig {
     mode: string,
@@ -18,11 +18,12 @@ interface Host {
 }
 
 export class MongoDBConnector {
-    private client: Connection;
+    private client: null | Connection;
     database: any;
     uri: string;
     options: {
-        dbName: string,
+        dbName?: string;
+        [x: string]: any;
     };
 
     constructor (
@@ -33,8 +34,10 @@ export class MongoDBConnector {
             options
         }: MongoDBConfig,
     ) {
+        this.client = null;
         this.database = "";
         this.uri = "mongodb://";
+        this.options = {};
 
         if (options?.isDebug === true) {
             mongoose.set("debug", true);
@@ -46,7 +49,7 @@ export class MongoDBConnector {
                     this.uri += `${ username }:${ password }@`
                 }
 
-                this.uri += hosts.reduce(
+                this.uri += (hosts ?? []).reduce(
                     (preVal, { hostname, port }, ind, arr) => {
                         preVal += `${ hostname }:${ port ? port : "27017" }${ ind < (arr.length - 1) ? "," : "" }`;
                         return preVal;
@@ -54,10 +57,10 @@ export class MongoDBConnector {
                     ""
                 );
 
-                this.uri += "/" + database;
-                this.database = database;
+                this.uri += "/" + database ?? "";
+                this.database = database ?? "";
                 this.options = {
-                    "dbName": database
+                    "dbName": database ?? ""
                 };
                 break;
             }
@@ -67,9 +70,9 @@ export class MongoDBConnector {
                     throw new Error("Invalid MongoDB SRV connection string");
                 }
                 this.uri = srv;
-                this.database = database;
+                this.database = database ?? "";
                 this.options = {
-                    "dbName": database
+                    "dbName": database ?? ""
                 };
                 break;
             }
@@ -87,7 +90,7 @@ export class MongoDBConnector {
 
                 this.uri += `/${ process.env["MONGODB_DATABASE"] }`;
                 this.database = process.env["MONGODB_DATABASE"];
-                this.options = { "dbName": process.env["MONGODB_DATABASE"] };
+                this.options = { "dbName": <string>process.env["MONGODB_DATABASE"] };
                 break;
             }
         }
@@ -108,7 +111,7 @@ export class MongoDBConnector {
                 this.client = mongoose.connection;
             }
             console.log(`[${ new Date().toISOString() }] Connection to database "${ this.database }" established.`);
-        } catch (e) {
+        } catch (e: any) {
             console.error(`[${ new Date().toISOString() }] Dumping database connection stack trace: ${ e }`);
             console.error(`[${ new Date().toISOString() }] Connection error: ${ e.message }`);
             process.exit(1);
@@ -124,7 +127,7 @@ export class MongoDBConnector {
 
         this.client.on(
             "disconnected",
-            e => {
+            (e: Error) => {
                 console.error(`[${ new Date().toISOString() }] Dumping disconnection stack trace: ${ e }`);
                 console.error(`[${ new Date().toISOString() }] Disconnected from database "${ this.database }"`);
                 process.exit(1);

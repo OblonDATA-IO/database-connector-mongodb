@@ -1,14 +1,36 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MongoDBConnector = void 0;
-const mongoose_1 = __importDefault(require("mongoose"));
+const mongoose_1 = __importStar(require("mongoose"));
 class MongoDBConnector {
     constructor({ mode, username, password, hosts, database, srv, options }) {
+        this.client = null;
         this.database = "";
         this.uri = "mongodb://";
+        this.options = {};
         if (options?.isDebug === true) {
             mongoose_1.default.set("debug", true);
         }
@@ -17,25 +39,25 @@ class MongoDBConnector {
                 if (username && password) {
                     this.uri += `${username}:${password}@`;
                 }
-                this.uri += hosts.reduce((preVal, { hostname, port }, ind, arr) => {
+                this.uri += (hosts ?? []).reduce((preVal, { hostname, port }, ind, arr) => {
                     preVal += `${hostname}:${port ? port : "27017"}${ind < (arr.length - 1) ? "," : ""}`;
                     return preVal;
                 }, "");
-                this.uri += "/" + database;
-                this.database = database;
+                this.uri += "/" + database ?? "";
+                this.database = database ?? "";
                 this.options = {
-                    "dbName": database
+                    "dbName": database ?? ""
                 };
                 break;
             }
             case "srv": {
                 if (!srv) {
-                    throw new Error("Invalid MongoDB SRV connection string");
+                    throw new mongoose_1.Error("Invalid MongoDB SRV connection string");
                 }
                 this.uri = srv;
-                this.database = database;
+                this.database = database ?? "";
                 this.options = {
-                    "dbName": database
+                    "dbName": database ?? ""
                 };
                 break;
             }
@@ -54,7 +76,7 @@ class MongoDBConnector {
             }
         }
         if (!this.database) {
-            throw new Error("A database has to be specified");
+            throw new mongoose_1.Error("A database has to be specified");
         }
     }
     async connect() {
@@ -76,9 +98,9 @@ class MongoDBConnector {
         }
         this.client.on("error", e => {
             console.error(`[${new Date().toISOString()}] Dumping database connection stack trace: ${e}`);
-            throw new Error(`[${new Date().toISOString()}] Database connection error: ${e.message}`);
+            throw new mongoose_1.Error(`[${new Date().toISOString()}] Database connection error: ${e.message}`);
         });
-        this.client.on("disconnected", e => {
+        this.client.on("disconnected", (e) => {
             console.error(`[${new Date().toISOString()}] Dumping disconnection stack trace: ${e}`);
             console.error(`[${new Date().toISOString()}] Disconnected from database "${this.database}"`);
             process.exit(1);

@@ -19,7 +19,8 @@ export declare class MongoDBConnector {
     database: any;
     uri: string;
     options: {
-        dbName: string;
+        dbName?: string;
+        [x: string]: any;
     };
     constructor({ mode, username, password, hosts, database, srv, options }: MongoDBConfig);
     connect(): Promise<mongoose.Connection>;
