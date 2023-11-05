@@ -26,6 +26,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MongoDBConnector = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 class MongoDBConnector {
+    client;
+    database;
+    uri;
+    options;
     constructor({ mode, username, password, hosts, database, srv, options }) {
         this.client = null;
         this.database = "";
