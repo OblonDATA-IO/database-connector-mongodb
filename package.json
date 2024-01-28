@@ -1,6 +1,6 @@
 {
   "name": "database-connector-mongodb",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "description": "",
   "main": "./dist/index.js",
@@ -15,7 +15,10 @@
     "mongoose": "^8"
   },
   "devDependencies": {
-    "@types/node": "^20.8.10",
-    "typescript": "^5.2.2"
+    "@types/node": "^20.11.8",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">= 16"
   }
 }
