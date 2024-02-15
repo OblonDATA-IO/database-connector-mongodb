@@ -105,8 +105,10 @@ export class MongoDBConnector {
 
         try {
             if ([1, 2].includes(mongoose.connection.readyState)) {
+                console.log(`[${ new Date().toISOString() }] Existing connection found. Opening as a separate connection... "`);
                 this.client = await mongoose.createConnection(this.uri, this.options).asPromise();
             } else {
+                console.log(`[${ new Date().toISOString() }] Opening as the default connection... "`);
                 await mongoose.connect(this.uri, this.options);
                 this.client = mongoose.connection;
             }
